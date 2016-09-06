@@ -13,7 +13,8 @@ import java.io.IOException;
  * Time: 下午8:42
  */
 public interface ZkOptionService {
-     public ValueNode getValueNode(String path,ZookeeperConnection zkConn) throws InterruptedException, KeeperException, IOException;
+	public ValueNode getPathValue(String path,ZookeeperConnection zkConn) throws InterruptedException, KeeperException, IOException;
+     public ValueNode getPathChildren(String path,ZookeeperConnection zkConn) throws InterruptedException, KeeperException, IOException;
      public String createPath(String path,ZookeeperConnection zkConn) throws IOException;
      public String createPath(String path,byte[] data,ZookeeperConnection zkConn) throws IOException;
 

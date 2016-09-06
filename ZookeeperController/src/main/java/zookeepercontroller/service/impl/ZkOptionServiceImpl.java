@@ -6,6 +6,8 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
 import zookeepercontroller.bean.ValueNode;
 import zookeepercontroller.service.ZkOptionService;
 import zookeepercontroller.zkconn.ZookeeperConnection;
@@ -21,35 +23,57 @@ import java.util.List;
  */
 @Component
 public class ZkOptionServiceImpl implements ZkOptionService{
-
-    public ValueNode getValueNode(String path, ZookeeperConnection zkConnc) throws InterruptedException, KeeperException, IOException {
+	
+	public ValueNode getPathValue(String path, ZookeeperConnection zkConnc) throws InterruptedException, KeeperException, IOException {
         ZooKeeper zkConn = zkConnc.createZookeeper();
         byte[] data = zkConn.getData(path,true,null);
         ValueNode vn = new ValueNode();
         vn.setZpath(path);
-        vn.setValue(new String(data));
+        if(data!=null){
+        	vn.setValue(new String(data));
+        }else{
+        	vn.setValue("");
+        }
+        vn.setConnStr(zkConnc.getConnectString());
+        List<String> childs =  zkConn.getChildren(path, false);
+        if(!CollectionUtils.isEmpty(childs))vn.setIsParent(true);
+        zkConn.close();
+        return vn;
+    }
+	
+
+    public ValueNode getPathChildren(String path, ZookeeperConnection zkConnc) throws InterruptedException, KeeperException, IOException {
+        ZooKeeper zkConn = zkConnc.createZookeeper();
+        byte[] data = zkConn.getData(path,true,null);
+        ValueNode vn = new ValueNode();
+        vn.setZpath(path);
+        if(data!=null){
+        	vn.setValue(new String(data));
+        }else{
+        	vn.setValue("");
+        }
         vn.setConnStr(zkConnc.getConnectString());
         List<ValueNode> valueNodeList = new ArrayList<ValueNode>();
         List<String> childs =  zkConn.getChildren(path, false);
-        zkConn.close();
         for(String child:childs){
             String p = path+"/"+child;
             if("/".equals(path)){
                 p = path+child;
             }
-            ZooKeeper zkConn2 = zkConnc.createZookeeper();
-            byte[] dt = zkConn2.getData(p,true,null);
+            byte[] dt = zkConn.getData(p,true,null);
             ValueNode cvn = new ValueNode();
             cvn.setZpath(p);
-            cvn.setValue(new String(dt));
+            if(dt!=null){
+            	cvn.setValue(new String(dt));
+            }else{
+            	cvn.setValue("");
+            }
             cvn.setConnStr(zkConnc.getConnectString());
-            ZooKeeper zkConn3 = zkConnc.createZookeeper();
-            List<String> childs2 = zkConn3.getChildren(p,false) ;
+            List<String> childs2 = zkConn.getChildren(p,false) ;
             if(childs2.size()>0)cvn.setIsParent(true);
-            zkConn3.close();
             valueNodeList.add(cvn);
-            zkConn2.close();
         }
+        zkConn.close();
         vn.setChildNodes(valueNodeList);
 
         if(valueNodeList.size()>0)vn.setIsParent(true);

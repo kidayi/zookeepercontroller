@@ -6,6 +6,8 @@ import zookeepercontroller.bean.ZTree;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.CollectionUtils;
+
 /**
  * User: PageLiu
  * Date: 12-11-28
@@ -15,23 +17,28 @@ public class ConvertTreeNode {
     public static ZTree  convertValueNode(ValueNode valueNode){
         String path = valueNode.getZpath();
         String data = valueNode.getValue();
-        List<ValueNode> valueNodeList= valueNode.getChildNodes();
+        
         ZTree root = new ZTree();
         root.setData(data);
         root.setName(getName(path));
         root.setZpath(path);
         root.setConnStr(valueNode.getConnStr());
-        List<ZTree> zTreeList = new ArrayList<ZTree>();
-        for(ValueNode valueN:valueNodeList){
-            ZTree child = new ZTree();
-            child.setData(valueN.getValue());
-            child.setName(getName(valueN.getZpath()));
-            child.setZpath(valueN.getZpath());
-            child.setParent(valueN.getIsParent());
-            child.setConnStr(valueN.getConnStr());
-            zTreeList.add(child);
+        root.setParent(valueNode.getIsParent());
+        List<ValueNode> valueNodeList= valueNode.getChildNodes();
+        if(!CollectionUtils.isEmpty(valueNodeList)){
+	        List<ZTree> zTreeList = new ArrayList<ZTree>();
+	        for(ValueNode valueN:valueNodeList){
+	            ZTree child = new ZTree();
+	            child.setData(valueN.getValue());
+	            child.setName(getName(valueN.getZpath()));
+	            child.setZpath(valueN.getZpath());
+	            child.setParent(valueN.getIsParent());
+	            child.setConnStr(valueN.getConnStr());
+	            zTreeList.add(child);
+	        }
+	        root.setChildTrees(zTreeList);
         }
-        root.setChildTrees(zTreeList);
+        
         return root;
     }
 

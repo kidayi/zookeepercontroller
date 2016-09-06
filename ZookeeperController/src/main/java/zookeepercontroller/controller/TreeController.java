@@ -46,7 +46,7 @@ public class TreeController {
 
         ZookeeperConnection connection = getConnection();
         connection.setConnectString(connectStr);
-        ValueNode vn = zkOptionServiceImpl.getValueNode(zpath, connection);
+        ValueNode vn = zkOptionServiceImpl.getPathValue(zpath, connection);
         ZTree zTree = ConvertTreeNode.convertValueNode(vn);
         String json = Bean2ViewUtil.cvtTree2Json(zTree);
         response.setContentType("application/json;charset=UTF-8");
@@ -59,7 +59,7 @@ public class TreeController {
 
         ZookeeperConnection connection = getConnection();
         connection.setConnectString(connectStr);
-        ValueNode vn = zkOptionServiceImpl.getValueNode(zpath, connection);
+        ValueNode vn = zkOptionServiceImpl.getPathChildren(zpath, connection);
         ZTree zTree = ConvertTreeNode.convertValueNode(vn);
         String json = Bean2ViewUtil.cvtTreeChilds2Json(zTree);
         response.setContentType("application/json;charset=UTF-8");
@@ -105,7 +105,7 @@ public class TreeController {
         String path = zkOptionServiceImpl.createPath(zpath+("/".equals(zpath)?"":"/")+nodeName,nodeValue.getBytes(),connection);
         response.setContentType("application/json;charset=UTF-8");
         if(StringUtil.isNotEmpty(path)) {
-            ValueNode vn = zkOptionServiceImpl.getValueNode(zpath+"/"+nodeName,connection);
+            ValueNode vn = zkOptionServiceImpl.getPathChildren(zpath+"/"+nodeName,connection);
             ZTree zTree = ConvertTreeNode.convertValueNode(vn);
             String json = Bean2ViewUtil.cvtTree2Json(zTree);
             response.getOutputStream().write(("{\"result\":1,\"node\":" + json + "}").getBytes());

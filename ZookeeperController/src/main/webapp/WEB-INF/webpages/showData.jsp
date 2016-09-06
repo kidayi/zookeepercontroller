@@ -1,4 +1,4 @@
-
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %> 
 <%@ include file="common/include.jsp" %>
 <html>
 <link rel="stylesheet" href="<%=basepath%>/css/zTreeStyle/demo.css" type="text/css">
@@ -67,7 +67,7 @@ function zTreeOnAdd(event, treeId, treeNode) {
                     Ok:{
                         text:"OK",
                         click:function () {
-                            if ($("#nodeValue").val() == "" || $("#nodeName").val() == "") {
+                            if ($("#pointName").val() == "" || $("#pointName").val() == "") {
                                 alert("节点内容和节点名称不能为空！");
                                 return;
                             }
@@ -76,7 +76,7 @@ function zTreeOnAdd(event, treeId, treeNode) {
                                     async:false,
                                     type:"POST",
                                     url:"<%=basepath%>/addZKNode.do",
-                                    data:"zpath=" + treeNode.zpath + "&nodeName=" + $("#nodeName").val() + "&nodeValue=" + $("#nodeValue").val() + "&connectStr=" + treeNode.connStr,
+                                    data:"zpath=" + treeNode.zpath + "&nodeName=" + $("#pointName").val() + "&nodeValue=" + $("#nodeValue").val() + "&connectStr=" + treeNode.connStr,
                                     dataType:"json",
                                     success:function (msg) {
                                         var res = msg.result;
@@ -332,7 +332,7 @@ $(function () {
     <table>
         <tr>
             <td> 节点名称：</td>
-            <td><input type="text" id="nodeName" name="nodeName" style="height: 30px"/></td>
+            <td><input type="text" id="pointName" name="pointName" style="height: 30px"/></td>
         </tr>
         <tr>
             <td> 节点内容：</td>
