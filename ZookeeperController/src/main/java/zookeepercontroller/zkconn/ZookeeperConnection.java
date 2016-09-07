@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class ZookeeperConnection {
     private String connectString;
     private int sessionTimeout;
-    private int zkConnectAwaitMs=1000*5;
+    private int zkConnectAwaitMs=1000*10;
     private Watcher watcher;
     private ZooKeeper zooKeeper  = null;
 
