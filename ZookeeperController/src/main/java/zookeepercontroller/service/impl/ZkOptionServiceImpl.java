@@ -30,7 +30,7 @@ public class ZkOptionServiceImpl implements ZkOptionService{
         ValueNode vn = new ValueNode();
         vn.setZpath(path);
         if(data!=null){
-        	vn.setValue(new String(data));
+        	vn.setValue(new String(data,"utf-8"));
         }else{
         	vn.setValue("");
         }
@@ -48,7 +48,7 @@ public class ZkOptionServiceImpl implements ZkOptionService{
         ValueNode vn = new ValueNode();
         vn.setZpath(path);
         if(data!=null){
-        	vn.setValue(new String(data));
+        	vn.setValue(new String(data,"utf-8"));
         }else{
         	vn.setValue("");
         }
@@ -64,7 +64,7 @@ public class ZkOptionServiceImpl implements ZkOptionService{
             ValueNode cvn = new ValueNode();
             cvn.setZpath(p);
             if(dt!=null){
-            	cvn.setValue(new String(dt));
+            	cvn.setValue(new String(dt,"utf-8"));
             }else{
             	cvn.setValue("");
             }
