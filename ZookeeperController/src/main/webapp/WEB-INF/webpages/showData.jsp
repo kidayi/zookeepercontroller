@@ -227,7 +227,7 @@ $(function () {
     zkTree = $("#zkTree").zTree(setting, zNodes);
 
 
-    $("body").css("padding-left", (document.body.clientWidth - $("#cTable").width()) / 2);
+    $("body").css("padding-left",100);
     $("#addRoot").click(function () {
         $("#addRootDialog").dialog(
                 {height:180, width:311,
@@ -303,19 +303,19 @@ $(function () {
 <head>
     <title>zookeeperController</title>
 </head>
-<body>
+<body> 
 
-<table border="0" cellpadding="0" style="padding-left: 0px" id="cTable">
+<table border="0" cellpadding="0" style="padding-left: 0px;" id="cTable">
 
     <tr>
         <td style="padding-left: 0px">
             <div style="padding-left: 0px">
-                <ul id="zkTree" class="tree" style="width: 400px;height: 366px;margin-left: 0px "></ul>
+                <ul id="zkTree" class="tree" style="width: 500px;height: 366px;margin-left: 0px "></ul>
             </div>
         </td>
         <td style="padding-left: 0px">
             <div id="contentDiv" style="padding-left: 0px;height: 366px;">
-                <textarea id="content" cols="50" rows="17" style="width: 400px;height: 366px;"></textarea></div>
+                <textarea id="content" cols="50" rows="17" style="width: 300px;height: 366px;"></textarea></div>
         </td>
     </tr>
     <tr>
