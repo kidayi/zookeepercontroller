@@ -1,10 +1,21 @@
 package zookeepercontroller.controller;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.zookeeper.KeeperException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import zookeepercontroller.EventWatcher;
+import zookeepercontroller.bean.Connect;
 import zookeepercontroller.bean.ValueNode;
 import zookeepercontroller.bean.ZTree;
 import zookeepercontroller.service.ZkOptionService;
@@ -13,14 +24,6 @@ import zookeepercontroller.util.ConvertTreeNode;
 import zookeepercontroller.util.JSONFile;
 import zookeepercontroller.util.StringUtil;
 import zookeepercontroller.zkconn.ZookeeperConnection;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * User: PageLiu
@@ -89,12 +92,20 @@ public class TreeController {
         return null;
     }
 
-    private Set removeConnSet(HttpServletRequest request, String connectStr) throws IOException {
-        Set<String> connSet = (Set<String>) JSONFile.readConnects();
-        if(StringUtil.isNotEmpty(connectStr)&&connSet.contains(connectStr)){
-            connSet.remove(connectStr);
-            JSONFile.persistConnect(connSet);
+    private List removeConnSet(HttpServletRequest request, String connectStr) throws IOException {
+        List<Connect> connSet = JSONFile.readConnects();
+        if(StringUtil.isEmpty(connectStr)){
+        	return  connSet;
         }
+        connectStr=connectStr.trim();
+        Iterator<Connect> it=connSet.iterator();
+        while(it.hasNext()){
+        	if(connectStr.equalsIgnoreCase(it.next().getStr())){
+        		it.remove();
+                JSONFile.persistConnect(connSet);
+            }
+		}
+        
         return  connSet;
     }
 
@@ -116,23 +127,32 @@ public class TreeController {
         return null;
     }
     @RequestMapping(value = "/addRootNode")
-    public String addRootNode(@RequestParam(required = true)String connectStr,HttpServletRequest request,HttpServletResponse response) throws IOException, InterruptedException, KeeperException {
-        Set connSet  = createConnSet(request,connectStr);
-
-
+    public String addRootNode(@RequestParam(required = true)String connectStr,
+    		@RequestParam(required = false)String connectName,HttpServletRequest request,HttpServletResponse response) throws IOException, InterruptedException, KeeperException {
+        Connect conn=new Connect();
+        conn.setName(connectName);
+        conn.setStr(connectStr);
+    	List connSet  = createConnSet(request,conn);
         response.getOutputStream().write(("{\"result\":1,\"rootNodes\":" + Bean2ViewUtil.convert2RootNodes(connSet) + "}").getBytes());
 
         return null;
     }
 
-    private Set createConnSet(HttpServletRequest request,String connectStr) throws IOException {
-        Set<String> connSet = (Set<String>) JSONFile.readConnects();
-        if(StringUtil.isNotEmpty(connectStr)&&!connSet.contains(connectStr)){
-            connSet.add(connectStr);
-            JSONFile.persistConnect(connSet);
-        }
-
+    private List createConnSet(HttpServletRequest request,Connect connect) throws IOException {
+    	List<Connect> connSet = JSONFile.readConnects();
+    	if(StringUtil.isEmpty(connect.getStr())){
+    		return connSet;
+    	}
+    	connect.setStr(connect.getStr().trim());
+    	for (Connect connect2 : connSet) {
+    		if(connect.getStr().equalsIgnoreCase(connect2.getStr())){
+                return  connSet;
+            }
+		}
+    	connSet.add(connect);
+        JSONFile.persistConnect(connSet);
         return  connSet;
+       
     }
 
     @RequestMapping(value = "/modifyNode")
@@ -151,10 +171,13 @@ public class TreeController {
     }
 
     @RequestMapping(value = "/index")
-    public String show(@RequestParam(required = false)String connectStr,HttpServletRequest request) throws IOException {
-        Set connSet  = null;
-        connSet  = createConnSet(request,connectStr);
-         request.setAttribute("rootNodes",Bean2ViewUtil.convert2RootNodes(connSet));
+    public String show(@RequestParam(required = false)String connectStr,
+    		@RequestParam(required = false)String connectName,HttpServletRequest request) throws IOException {
+    	Connect conn=new Connect();
+        conn.setName(connectName);
+        conn.setStr(connectStr);
+    	List connSet  = createConnSet(request,conn);
+        request.setAttribute("rootNodes",Bean2ViewUtil.convert2RootNodes(connSet));
 
         return "showData";
     }

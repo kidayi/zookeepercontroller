@@ -230,7 +230,7 @@ $(function () {
     $("body").css("padding-left", (document.body.clientWidth - $("#cTable").width()) / 2);
     $("#addRoot").click(function () {
         $("#addRootDialog").dialog(
-                {height:140, width:311,
+                {height:180, width:311,
                     resizable:false,
                     title:"增加连接(host:port)",
                     modal:true,
@@ -246,7 +246,7 @@ $(function () {
                                     async:false,
                                     type:"POST",
                                     url:"<%=basepath%>/addRootNode.do",
-                                    data:"connectStr=" + $("#connectStr").val(),
+                                    data:"connectStr=" + $("#connectStr").val()+"&connectName="+$("#connectName").val(),
                                     dataType:"json",
                                     success:function (msg) {
                                         var res = msg.result;
@@ -310,11 +310,12 @@ $(function () {
     <tr>
         <td style="padding-left: 0px">
             <div style="padding-left: 0px">
-                <ul id="zkTree" class="tree" style="width: 200px;height: 366px;margin-left: 0px "></ul>
+                <ul id="zkTree" class="tree" style="width: 400px;height: 366px;margin-left: 0px "></ul>
             </div>
         </td>
         <td style="padding-left: 0px">
-            <div id="contentDiv" style="padding-left: 0px"><textarea id="content" cols="50" rows="17"></textarea></div>
+            <div id="contentDiv" style="padding-left: 0px;height: 366px;">
+                <textarea id="content" cols="50" rows="17" style="width: 400px;height: 366px;"></textarea></div>
         </td>
     </tr>
     <tr>
@@ -343,6 +344,10 @@ $(function () {
 
 <div style="display: none;" id="addRootDialog">
     <table>
+        <tr>
+            <td> 名称：</td>
+            <td><input type="text" id="connectName" name="connectName" style="height: 30px"/></td>
+        </tr>
         <tr>
             <td> 连接串：</td>
             <td><input type="text" id="connectStr" name="connectStr" style="height: 30px"/></td>

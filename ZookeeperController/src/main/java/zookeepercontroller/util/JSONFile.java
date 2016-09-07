@@ -1,28 +1,31 @@
 package zookeepercontroller.util;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.*;
-import java.util.*;
+import zookeepercontroller.bean.Connect;
 
 /**
  * User: PageLiu Date: 12-11-28 Time: 下午8:56
  */
 public class JSONFile {
 
-	public static void persistConnect(Set<String> connSet) throws IOException {
+	public static void persistConnect(List<Connect> connSet) throws IOException {
 		if (connSet != null) {
 			JSONObject jsonObject = new JSONObject();
-			ArrayList<String> conns = new ArrayList<String>();
-			Iterator iterator = connSet.iterator();
-			while (iterator.hasNext()) {
-				String i = (String) iterator.next();
-				conns.add(i);
-			}
-
-			jsonObject.put("conns", conns);
+			jsonObject.put("conns", connSet);
 
 			File jsonFile = new File(JSONFile.class.getResource("/").getFile());
 			if (jsonFile.exists() && jsonFile.isDirectory()) {
@@ -38,25 +41,9 @@ public class JSONFile {
 		}
 	}
 
-	public static void persistConnect(String jsonString) throws IOException {
-		if (StringUtil.isNotEmpty(jsonString)) {
-			File jsonFile = new File(JSONFile.class.getResource("/").getFile());
-			if (jsonFile.exists() && jsonFile.isDirectory()) {
-				File file = new File(jsonFile, ".zkcontroller");
-				file.mkdir();
-				File jFile = new File(file, "conns.json");
-				FileWriter fw = new FileWriter(jFile);
-				fw.write(jsonString);
-				fw.close();
-			} else {
-				throw new IOException("没有找到用户路径！");
-			}
-		}
-	}
-
-	public static Set<String> readConnects() throws IOException {
+	public static List<Connect> readConnects() throws IOException {
 		File jsonFile = new File(JSONFile.class.getResource("/").getFile());
-		Set<String> connSet = new HashSet<String>();
+		List<Connect> connSet = new ArrayList<Connect>();
 		if (jsonFile.exists() && jsonFile.isDirectory()) {
 			File file = new File(jsonFile, ".zkcontroller");
 			if (!file.exists() || !file.isDirectory()) {
@@ -77,7 +64,7 @@ public class JSONFile {
 				JSONObject jsonObject = JSON.parseObject(sbs.toString());
 				JSONArray jsonArray = jsonObject.getJSONArray("conns");
 				for (int i = 0; i < jsonArray.size(); i++) {
-					String conn = jsonArray.getString(i);
+					Connect conn = jsonArray.getObject(i, Connect.class);
 					connSet.add(conn);
 				}
 
@@ -88,12 +75,18 @@ public class JSONFile {
 						Properties properties = new Properties();
 						properties.load(inputStream);
 						String defaultConns = (String) properties.get("defaultConns");
-						String[] conns = defaultConns.split(",");
-						for (String conn : conns) {
-							connSet.add(conn);
+						if(defaultConns!=null){
+							String[] conns = defaultConns.split(",");
+							if(conns!=null){
+								for (String conn : conns) {
+									Connect connObj = new Connect();
+									connObj.setStr(conn);
+									connSet.add(connObj);
+								}
+							}
 						}
 					} catch (NullPointerException e) {
-
+						e.printStackTrace();
 					} finally {
 						inputStream.close();
 					}

@@ -3,6 +3,8 @@ package zookeepercontroller.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
+import zookeepercontroller.bean.Connect;
 import zookeepercontroller.bean.ZTree;
 
 import java.util.List;
@@ -29,12 +31,17 @@ public class Bean2ViewUtil {
         return JSON.toJSONString(valueNode);
     }
 
-    public static String convert2RootNodes(Set<String> connSet) {
+    public static String convert2RootNodes(List<Connect> connSet) {
         JSONArray jsonArray = new JSONArray();
-        for(String conn:connSet){
+        for(Connect conn:connSet){
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name",conn);
-            jsonObject.put("connStr",conn);
+            String showName="";
+            if(StringUtil.isNotEmpty(conn.getName())){
+            	showName+=conn.getName()+":";
+            }
+            showName+=conn.getStr();
+            jsonObject.put("name",showName);
+            jsonObject.put("connStr",conn.getStr());
             jsonObject.put("zpath","/");
             jsonObject.put("isParent",true);
 
