@@ -27,11 +27,9 @@ public class JSONFile {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("conns", connSet);
 
-			File jsonFile = new File(JSONFile.class.getResource("/").getFile());
-			if (jsonFile.exists() && jsonFile.isDirectory()) {
-				File file = new File(jsonFile, ".zkcontroller");
-				file.mkdir();
-				File jFile = new File(file, "conns.json");
+			File classPathFile = new File(JSONFile.class.getResource("/").getFile());
+			if (classPathFile.exists() && classPathFile.isDirectory()) {
+				File jFile = new File(classPathFile, "conns.json");
 				FileWriter fw = new FileWriter(jFile);
 				fw.write(jsonObject.toJSONString());
 				fw.close();
@@ -42,16 +40,10 @@ public class JSONFile {
 	}
 
 	public static List<Connect> readConnects() throws IOException {
-		File jsonFile = new File(JSONFile.class.getResource("/").getFile());
+		File classPathFile = new File(JSONFile.class.getResource("/").getFile());
 		List<Connect> connSet = new ArrayList<Connect>();
-		if (jsonFile.exists() && jsonFile.isDirectory()) {
-			File file = new File(jsonFile, ".zkcontroller");
-			if (!file.exists() || !file.isDirectory()) {
-				file.mkdir();
-
-			}
-
-			File jFile = new File(file, "conns.json");
+		if (classPathFile.exists() && classPathFile.isDirectory()) {
+			File jFile = new File(classPathFile, "conns.json");
 			if (jFile.exists()) {
 				FileReader fr = new FileReader(jFile);
 				char[] chas = new char[1024];
@@ -62,12 +54,15 @@ public class JSONFile {
 				}
 				fr.close();
 				JSONObject jsonObject = JSON.parseObject(sbs.toString());
-				JSONArray jsonArray = jsonObject.getJSONArray("conns");
-				for (int i = 0; i < jsonArray.size(); i++) {
-					Connect conn = jsonArray.getObject(i, Connect.class);
-					connSet.add(conn);
+				if(jsonObject!=null){
+					JSONArray jsonArray = jsonObject.getJSONArray("conns");
+					if(jsonArray!=null && !jsonArray.isEmpty()){
+						for (int i = 0; i < jsonArray.size(); i++) {
+							Connect conn = jsonArray.getObject(i, Connect.class);
+							connSet.add(conn);
+						}
+					}
 				}
-
 			} else {
 				InputStream inputStream = JSONFile.class.getResourceAsStream("/settings.properties");
 				if (inputStream != null) {
