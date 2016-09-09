@@ -1352,11 +1352,12 @@
 
         $("#" + treeNode.tId + IDMark_Remove).bind('click',
             function() {
-                if (tools.apply(setting.callback.beforeRemove, [setting.treeObjId, treeNode], true) == false) return true;
-                removeTreeNode(setting, treeNode);
+                //if (tools.apply(setting.callback.beforeRemove, [setting.treeObjId, treeNode], true) == false) return true;
+                //removeTreeNode(setting, treeNode);
                 //触发remove事件
-                setting.treeObj.trigger(ZTREE_REMOVE, [setting.treeObjId, treeNode]);
-                return false;
+                //setting.treeObj.trigger(ZTREE_REMOVE, [setting.treeObjId, treeNode]);
+                alert("请用其它工具删除,节点path:"+treeNode.zpath+"\r\n");
+        		return false;
             }
         ).bind('mousedown',
             function(eventMouseDown) {

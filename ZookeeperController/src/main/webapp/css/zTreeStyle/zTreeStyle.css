@@ -72,7 +72,7 @@ website:	http://code.google.com/p/jquerytree/
 }
 
 .tree li button.edit {background:url("./img/edit.png") no-repeat scroll 0 0 transparent;}
-.tree li button.remove {background:url("./img/remove.png") no-repeat scroll 0 0 transparent;}
+.tree li button.remove {background:url("./img/home.gif") no-repeat scroll 0 0 transparent;}
 .tree li button.add {background:url("./img/addNode.png") no-repeat scroll 0 0 transparent;}
 
 .tree li button.chk {
